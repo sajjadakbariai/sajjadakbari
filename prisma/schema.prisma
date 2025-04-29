@@ -1,0 +1,99 @@
+// مدل اصلی برای دسته‌بندی‌ها
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     Post[]
+  seo       CategorySEO? @relation(fields: [seoId], references: [id])
+  seoId     String?
+}
+
+// مدل اصلی برای پست‌ها
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  seo         PostSEO? @relation(fields: [seoId], references: [id])
+  seoId       String?
+}
+
+// مدل سئو برای پست‌ها
+model PostSEO {
+  id              String   @id @default(cuid())
+  post            Post?
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  canonicalUrl    String?
+  noIndex         Boolean  @default(false)
+  openGraphImage  String?
+  twitterCard     Json?    // ذخیره تنظیمات Twitter Card
+  schemaMarkup    Json?    // ذخیره داده‌های ساختاریافته Schema.org
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// مدل سئو برای دسته‌بندی‌ها
+model CategorySEO {
+  id              String   @id @default(cuid())
+  category        Category?
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  canonicalUrl    String?
+  noIndex         Boolean  @default(false)
+  openGraphImage  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// مدل برای تنظیمات سئو جهانی
+model GlobalSEO {
+  id              String   @id @default(cuid())
+  siteName        String
+  defaultTitle    String
+  defaultDescription String
+  defaultKeywords String
+  logo            String?
+  twitterHandle   String?
+  facebookAppId   String?
+  defaultSocialImage String?
+  robotsTxt       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// مدل برای صفحات خاص (صفحه اصلی، درباره ما، تماس و...)
+model Page {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  seo         PageSEO? @relation(fields: [seoId], references: [id])
+  seoId       String?
+}
+
+// مدل سئو برای صفحات خاص
+model PageSEO {
+  id              String   @id @default(cuid())
+  page            Page?
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  canonicalUrl    String?
+  noIndex         Boolean  @default(false)
+  openGraphImage  String?
+  schemaType      String?  // نوع Schema (مثل AboutPage, ContactPage)
+  schemaMarkup    Json?    // داده‌های ساختاریافته سفارشی
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
