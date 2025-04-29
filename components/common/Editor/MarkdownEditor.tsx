@@ -10,12 +10,14 @@ interface MarkdownEditorProps {
   value: string
   onChange: (value: string) => void
   onImageUpload?: (file: File) => Promise<string>
+  height?: number
 }
 
 const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   value,
   onChange,
-  onImageUpload
+  onImageUpload,
+  height = 500
 }) => {
   const [content, setContent] = useState(value)
 
@@ -28,14 +30,28 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     onChange(text)
   }
 
+  const customRenderHTML = (text: string) => {
+    return <div dangerouslySetInnerHTML={{ __html: text }} />
+  }
+
   return (
     <div className="border rounded-lg overflow-hidden">
       <MdEditor
         value={content}
-        style={{ height: '500px' }}
+        style={{ height: `${height}px` }}
         onChange={handleEditorChange}
         onImageUpload={onImageUpload}
-        renderHTML={(text) => <div dangerouslySetInnerHTML={{ __html: text }} />}
+        renderHTML={customRenderHTML}
+        config={{
+          view: {
+            menu: true,
+            md: true,
+            html: true,
+            fullScreen: true,
+            hideMenu: false
+          },
+          imageUrl: '/api/upload'
+        }}
       />
     </div>
   )
